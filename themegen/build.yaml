@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      themegen_theme:themegen_annotation:
+        enabled: true
+
+builders:
+  themegen_theme:
+    import: "package:themegen/builder.dart"
+    builder_factories: ["themeGen"]
+    build_extensions: {".dart": [".theme.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen:combining_builder"]
