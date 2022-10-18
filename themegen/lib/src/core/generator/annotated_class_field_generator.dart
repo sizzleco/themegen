@@ -16,7 +16,9 @@ abstract class AnnotatedClassFieldGenerator<A, T>
         _allowedEntity = allowedEntity;
 
   Iterable<T> extractFieldInfo(
-      ClassElement thisElement, ConstantReader annotation);
+    ClassElement thisElement,
+    ConstantReader annotation,
+  );
 
   bool elementPredicate(ClassElement element) => true;
 

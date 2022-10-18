@@ -1,6 +1,7 @@
 library themegen_annotation;
 
-const themegen = ThemeGen();
+const theme = ThemeGen();
+const themeExtension = ThemeGenExtension();
 
 class ThemeGen {
   const ThemeGen({
@@ -14,8 +15,8 @@ class ThemeGen {
 
 class ThemeGenExtension {
   const ThemeGenExtension({
-    this.title,
+    this.group,
   });
 
-  final String? title;
+  final String? group;
 }

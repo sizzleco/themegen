@@ -8,7 +8,16 @@ class ThemeProducer extends BuilderCodeProducer<Set<ThemeModel>> {
   @override
   Spec spec(String className, Set<ThemeModel> info) {
     return Class(
-      (p0) => p0..name = '_\$${info.first.title}',
+      (p0) => p0
+        ..name = info.first.title
+            .replaceAll(
+              r'$',
+              '',
+            )
+            .replaceAll(
+              '_',
+              '',
+            ),
     );
   }
 }

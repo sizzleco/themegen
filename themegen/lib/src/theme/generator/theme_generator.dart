@@ -4,7 +4,7 @@ import 'package:themegen/src/core/generator/annotated_class_field_generator.dart
 import 'package:themegen/src/theme/model/theme_model.dart';
 import 'package:themegen_annotation/themegen_annotation.dart';
 
-class ThemeGenerator<T>
+class ThemeGenerator
     extends AnnotatedClassFieldGenerator<ThemeGen, ThemeModel> {
   ThemeGenerator({
     required super.producer,
