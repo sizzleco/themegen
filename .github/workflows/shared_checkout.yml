@@ -16,12 +16,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ inputs.directory }}
-      - name: PWD
-        run: |
-          echo $PWD
-          echo $ls
+
       - name: 🫰 Check flutter version
         run: flutter --version
 
@@ -31,20 +26,24 @@ jobs:
 
       - name: 👷 Install Dependencies
         timeout-minutes: 1
+        working-directory: ${{ inputs.directory }}
         run: flutter pub get
 
       - name: 🔎 Check format
         timeout-minutes: 1
+        working-directory: ${{ inputs.directory }}
         run: |
           flutter format --set-exit-if-changed -l 80 .
 
       - name: 📈 Check analyzer
         timeout-minutes: 1
+        working-directory: ${{ inputs.directory }}
         run: | 
           flutter analyze --fatal-infos --fatal-warnings 
 
       - name: 🧪 Run tests
         timeout-minutes: 2
+        working-directory: ${{ inputs.directory }}
         run: |
           flutter test --coverage         
         
