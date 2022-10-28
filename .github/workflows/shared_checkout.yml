@@ -6,9 +6,13 @@ on:
         required: true
         default: '.'
         type: string
+
 jobs:
   checkout:
     runs-on: ubuntu-latest
+    container:
+      image: plugfox/flutter:stable
+      options: --user root
     steps:
       - name: 🫰 Check flutter version
         working-directory: ${{ inputs.directory }}
