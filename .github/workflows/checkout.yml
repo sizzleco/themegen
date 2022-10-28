@@ -18,7 +18,7 @@ jobs:
   themegen:
     uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
     with:
-      directory: ./themegen
+      directory: .
   
   themegen_annotation:
     uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
