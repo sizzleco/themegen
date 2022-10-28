@@ -20,42 +20,19 @@ jobs:
     container:
       image: plugfox/flutter:stable
       options: --user root
-
     steps:
-      - name: 🫰 Check flutter version
-        run: flutter --version
-        
       - name: 🚂 Get latest code
         uses: actions/checkout@v2
 
-      - name: 🐝 Dart tools activation
-        run: |
-          dart pub global activate coverage
-
-      - name: 👷 Install Dependencies
-        timeout-minutes: 1
-        run: flutter pub get
-
-      - name: 😊 Run codegen
-        run: flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: 🔎 Check format
-        timeout-minutes: 1
-        run: |
-          flutter format --set-exit-if-changed -l 80 .
-
-      - name: 📈 Check analyzer
-        timeout-minutes: 1
-        run: | 
-          flutter analyze --fatal-infos --fatal-warnings 
-
-      - name: 🧪 Run tests
-        timeout-minutes: 2
-        run: |
-          flutter test --coverage         
+      - name: '🚂 Checkout themegen'
+        uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
+        with:
+          directory: themegen
+      
+      - name: '🚂 Checkout themegen_annotation'
+        uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
+        with:
+          directory: themegen_annotation
         
-      - name: 📥 Upload coverage to Codecov
-        if: ${{ github.ref == 'refs/heads/master' }}
-        timeout-minutes: 1
-        uses: codecov/codecov-action@v2.1.0
+      
     
