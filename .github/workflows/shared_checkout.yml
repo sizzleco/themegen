@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🫰 Check flutter version
+        working-directory: ${{ inputs.directory }}
         run: flutter --version
         
       - name: 🚂 Get latest code
