@@ -21,7 +21,7 @@ jobs:
       - name: PWD
         run: |
           echo $PWD
-          echo ls
+          echo $ls
       - name: 🫰 Check flutter version
         run: flutter --version
 
