@@ -4,8 +4,7 @@ import 'package:themegen/src/core/generator/annotated_class_field_generator.dart
 import 'package:themegen/src/theme/model/theme_model.dart';
 import 'package:themegen_annotation/themegen_annotation.dart';
 
-class ThemeGenerator
-    extends AnnotatedClassFieldGenerator<ThemeGen, ThemeModel> {
+class ThemeGenerator extends AnnotatedClassFieldGenerator<ThemeGen, ThemeModel> {
   ThemeGenerator({
     required super.producer,
     required super.allowedEntity,
@@ -17,11 +16,11 @@ class ThemeGenerator
     ConstantReader annotation,
   ) sync* {
     yield ThemeModel(
-      title: annotation.read('title').isNull
+      title: annotation.read('title').isNull //
           ? thisElement.name
           : annotation.read('title').stringValue,
       extensions: annotation
-          .read('extensions')
+          .read('styles')
           .setValue
           .map((e) => e.toTypeValue()?.element2)
           .whereType<ClassElement>()

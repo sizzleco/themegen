@@ -6,30 +6,33 @@ import 'package:themegen_annotation/themegen_annotation.dart';
 
 part 'example.g.dart';
 
-@ThemeGen(extensions: {
-  _$AppColorsLight,
-})
-class _$AppThemeLight {}
+@ThemeGen(
+  styles: {
+    _$AppColorsLight,
+    _$AppFontStyles,
+  },
+)
+abstract class _$AppThemeLight {}
 
-@ThemeGen(extensions: {
-  _$AppColorsDark,
-})
+@ThemeGen(
+  styles: {
+    _$AppColorsDark,
+    _$AppFontStyles,
+  },
+)
 class _$AppThemeDark {}
 
-@ThemeGenExtension(group: 'AppColors')
 class _$AppColorsLight {
   static const Color primary = Color(0xFF000000);
   static const Color secondary = Color(0xFF000000);
 }
 
-@ThemeGenExtension(group: 'AppColors')
 class _$AppColorsDark {
   static const Color primary = Color(0xFF000000);
   static const Color secondary = Color(0xFF000000);
 }
 
-@ThemeGenExtension(group: 'AppFontStyles')
-class _$AppFontStylesLight {
+class _$AppFontStyles {
   static TextStyle h1(AppColors colors) => TextStyle(
         color: colors.primary,
       );
