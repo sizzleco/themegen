@@ -52,7 +52,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ${{ inputs.directory }}/coverage/lcov.info
-          flags: unittests
+          flags: ${{ inputs.directory }}
           name: codecov-umbrella
           fail_ci_if_error: true
         timeout-minutes: 1
