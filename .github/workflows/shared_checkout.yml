@@ -10,8 +10,11 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
+      - name: pwd
+        run: pwd && ls
+
       - name: 🫰 Check flutter version
-        # working-directory: ${{ inputs.directory }}
+        working-directory: ${{ inputs.directory }}
         run: flutter --version
         
       - name: 🚂 Get latest code
