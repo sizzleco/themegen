@@ -14,6 +14,8 @@ jobs:
       image: plugfox/flutter:stable
       options: --user root
     steps:
+      - name: Checkout
+        run: echo "$PWD"
       - name: 🫰 Check flutter version
         working-directory: ${{ inputs.directory }}
         run: flutter --version
