@@ -1,0 +1,61 @@
+on: 
+  workflow_call:
+    inputs:
+      directory:
+        description: 'The directory to checkout the repository to'
+        required: true
+        default: '.'
+        type: string
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    container:
+      image: plugfox/flutter:stable
+      options: --user root
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: 🫰 Check flutter version
+        run: flutter --version
+
+      - name: 🐝 Dart tools activation
+        run: |
+          dart pub global activate coverage
+
+      - name: 👷 Install Dependencies
+        timeout-minutes: 1
+        working-directory: ${{ inputs.directory }}
+        run: flutter pub get
+
+      - name: 🔎 Check format
+        timeout-minutes: 1
+        working-directory: ${{ inputs.directory }}
+        run: |
+          flutter format --set-exit-if-changed -l 80 .
+
+      - name: 📈 Check analyzer
+        timeout-minutes: 1
+        working-directory: ${{ inputs.directory }}
+        run: | 
+          flutter analyze --fatal-infos --fatal-warnings 
+
+      - name: 🧪 Run tests
+        timeout-minutes: 2
+        working-directory: ${{ inputs.directory }}
+        run: |
+          flutter test --coverage         
+        
+      - name: 📥 Upload coverage to Codecov
+        if: ${{ github.ref == 'refs/heads/master' }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ${{ inputs.directory }}/coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+        timeout-minutes: 1
+        uses: codecov/codecov-action@v2.1.0
+  
+  
