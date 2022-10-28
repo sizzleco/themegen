@@ -15,24 +15,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-analyze:
-    runs-on: ubuntu-latest
-    container:
-      image: plugfox/flutter:stable
-      options: --user root
-    steps:
-      - name: 🚂 Get latest code
-        uses: actions/checkout@v2
+  themegen:
+    uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
+    with:
+      directory: themegen
+  
+  themegen_annotation:
+    uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
+    with:
+      directory: themegen_annotation
 
-      - name: '🚂 Checkout themegen'
-        uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
-        with:
-          directory: themegen
-      
-      - name: '🚂 Checkout themegen_annotation'
-        uses: blazeltd/themegen/.github/workflows/shared_checkout.yml@master
-        with:
-          directory: themegen_annotation
         
       
     
