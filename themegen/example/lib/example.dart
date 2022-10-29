@@ -8,31 +8,31 @@ part 'example.g.dart';
 
 @ThemeGen(
   styles: {
-    _$AppColorsLight,
-    _$AppFontStyles,
+    AppColorsLight,
+    AppFontStyles,
   },
 )
 abstract class _$AppThemeLight {}
 
 @ThemeGen(
   styles: {
-    _$AppColorsDark,
-    _$AppFontStyles,
+    AppColorsDark,
+    AppFontStyles,
   },
 )
 class _$AppThemeDark {}
 
-class _$AppColorsLight {
+class AppColorsLight {
   static const Color primary = Color(0xFF000000);
   static const Color secondary = Color(0xFF000000);
 }
 
-class _$AppColorsDark {
+class AppColorsDark {
   static const Color primary = Color(0xFF000000);
   static const Color secondary = Color(0xFF000000);
 }
 
-class _$AppFontStyles {
+class AppFontStyles {
   static TextStyle h1(AppColors colors) => TextStyle(
         color: colors.primary,
       );
