@@ -7,36 +7,36 @@ import 'package:themegen_annotation/themegen_annotation.dart';
 part 'example.g.dart';
 
 @ThemeGen(
-  styles: {
-    AppColorsLight,
-    AppFontStyles,
+  extensions: {
+    _$AppColorsLight,
+    // AppFontStyles,
   },
 )
 abstract class _$AppThemeLight {}
 
 @ThemeGen(
-  styles: {
-    AppColorsDark,
-    AppFontStyles,
+  extensions: {
+    _$AppColorsDark,
+    // AppFontStyles,
   },
 )
 class _$AppThemeDark {}
 
-class AppColorsLight {
+class _$AppColorsLight {
   static const Color primary = Color(0xFF000000);
   static const Color secondary = Color(0xFF000000);
 }
 
-class AppColorsDark {
+class _$AppColorsDark {
   static const Color primary = Color(0xFF000000);
   static const Color secondary = Color(0xFF000000);
 }
 
-class AppFontStyles {
-  static TextStyle h1(AppColors colors) => TextStyle(
-        color: colors.primary,
-      );
-}
+// class AppFontStyles {
+//   static TextStyle h1(AppColors colors) => TextStyle(
+//         color: colors.primary,
+//       );
+// }
 
 void main() => runZonedGuarded<Future<void>>(
       () async {

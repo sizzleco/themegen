@@ -1,22 +1,13 @@
 library themegen_annotation;
 
 const theme = ThemeGen();
-const themeExtension = ThemeGenExtension();
 
 class ThemeGen {
   const ThemeGen({
     this.title,
-    this.styles = const {},
+    this.extensions = const {},
   });
 
   final String? title;
-  final Set<Type> styles;
-}
-
-class ThemeGenExtension {
-  const ThemeGenExtension({
-    this.group,
-  });
-
-  final String? group;
+  final Set<Type> extensions;
 }
