@@ -7,7 +7,5 @@ abstract class CodeProducer<T> {
 
   Spec spec(T input);
 
-  String produce(T input) {
-    return spec(input).accept(_emitter).toString();
-  }
+  String produce(T input) => spec(input).accept(_emitter).toString();
 }

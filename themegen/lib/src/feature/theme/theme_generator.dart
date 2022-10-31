@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -9,10 +10,15 @@ class ThemeGenerator extends Generator {
   const ThemeGenerator(this._themeProducer);
   final ThemeProducer _themeProducer;
 
+  static const _typeChecker = TypeChecker.fromRuntime(ThemeGen);
+
   @override
   String generate(LibraryReader library, BuildStep buildStep) {
     // get classes only annotated with @ThemeGen
-    final classes = library.classes.whereAnnotatedWith<ThemeGen>();
+    final classes = library
+        .annotatedWith(_typeChecker)
+        .map((e) => e.element)
+        .whereType<ClassElement>();
     // get only @ThemeGen annotations
     final metadatas = classes.annotationsOf<ThemeGen>();
     // get unique extensions from @ThemeGen annotations
