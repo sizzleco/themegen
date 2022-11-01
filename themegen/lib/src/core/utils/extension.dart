@@ -1,4 +1,7 @@
+import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:pure/pure.dart';
 
 extension StringX on String {
   String get capitalized => this[0].toUpperCase() + substring(1);
@@ -54,5 +57,53 @@ extension UniqueNestedX<T> on Iterable<Iterable<T?>?> {
       }
     });
     return list;
+  }
+}
+
+extension MethodX on MethodElement {
+  List<String> getParamsForMethod() {
+    final element = this;
+    final session = element.session;
+    final parsed = session?.getParsedLibraryByElement(element.library)
+        as ParsedLibraryResult?;
+    final declaration = parsed?.getElementDeclaration(element);
+    final node = declaration?.node;
+    if (node == null) return [];
+    Token? token = node.beginToken;
+    final types = <String>[];
+
+    var isParenthesis = false;
+    while (token != null && token != node.endToken) {
+      if (token?.type == TokenType.CLOSE_PAREN) {
+        isParenthesis = false;
+        break;
+      }
+      token = token?.next;
+      if (token?.type == TokenType.OPEN_PAREN) {
+        isParenthesis = true;
+        continue;
+      }
+
+      if (isParenthesis) {
+        final lexeme = token?.lexeme;
+        if (lexeme != null && lexeme != ',') {
+          Tram<String> isolateParameters(String combinedLexeme, Token? t) {
+            token = t?.next;
+            if (token == null ||
+                token?.type == TokenType.CLOSE_PAREN ||
+                token?.type == TokenType.COMMA ||
+                token!.isEof) {
+              return Tram.done(combinedLexeme);
+            }
+            final combined = '$combinedLexeme $token';
+
+            return Tram.call(() => isolateParameters(combined, token));
+          }
+
+          types.add(isolateParameters.bounce(lexeme, token));
+        }
+      }
+    }
+    return types;
   }
 }

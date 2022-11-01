@@ -30,7 +30,7 @@ class _$AppColorsDark {
 }
 
 class _$AppFontStyles {
-  static TextStyle h1(AppColors colors) => TextStyle(
+  static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
         color: colors.primary,
       );
 }

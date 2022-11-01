@@ -34,10 +34,6 @@ class ExtProducer extends CodeProducer<DataExtension> {
     final staticFields = cl.fields.whereType<FieldElement>().where(
           (f) => f.isStatic,
         );
-    final staticMethods = cl.methods.whereType<MethodElement>().where(
-          (m) => m.isStatic,
-        );
-    print(staticMethods);
     return Class(
       (builder) => builder
         ..name = className
