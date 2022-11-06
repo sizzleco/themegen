@@ -2,9 +2,12 @@ import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:pure/pure.dart';
+import 'package:themegen/src/feature/theme/theme_producer.dart';
 
 extension StringX on String {
   String get capitalized => this[0].toUpperCase() + substring(1);
+
+  String get lowerCaseFirst => this[0].toLowerCase() + substring(1);
 
   List<String> splitPascalCase() {
     final input = this;
@@ -25,6 +28,26 @@ extension StringX on String {
       result.add(buffer.toString());
     }
     return result;
+  }
+}
+
+extension ListX<T> on Iterable<T> {
+  String joinParams([String separator = '']) {
+    final iterator = this.iterator;
+    if (!iterator.moveNext()) return '';
+    final buffer = StringBuffer();
+    if (separator == '') {
+      do {
+        buffer.write(iterator.current.toString());
+      } while (iterator.moveNext());
+    } else {
+      do {
+        buffer
+          ..write(iterator.current.toString())
+          ..write(separator);
+      } while (iterator.moveNext());
+    }
+    return buffer.toString();
   }
 }
 
@@ -64,8 +87,7 @@ extension MethodX on MethodElement {
   List<String> getParamsForMethod() {
     final element = this;
     final session = element.session;
-    final parsed = session?.getParsedLibraryByElement(element.library)
-        as ParsedLibraryResult?;
+    final parsed = session?.getParsedLibraryByElement(element.library) as ParsedLibraryResult?;
     final declaration = parsed?.getElementDeclaration(element);
     final node = declaration?.node;
     if (node == null) return [];
@@ -105,5 +127,33 @@ extension MethodX on MethodElement {
       }
     }
     return types;
+  }
+
+  Iterable<String> paramsToFillLower() {
+    final params = getParamsForMethod().expand((element) => element.split(' '));
+    final whereParams = params
+        .where(ThemeProducer.similarExtensions.containsKey)
+        .map((e) => e[0].toLowerCase() + e.substring(1));
+    return whereParams;
+  }
+
+  Iterable<String> paramsToFill() {
+    final params = getParamsForMethod().expand((element) => element.split(' '));
+    final whereParams = params.where(ThemeProducer.similarExtensions.containsKey);
+    return whereParams;
+  }
+}
+
+extension MethodListX on Iterable<MethodElement> {
+  Set<String> paramsForMethods() {
+    final neededParams = expand(
+      (element) => element
+          .getParamsForMethod()
+          .expand(
+            (element) => element.split(' '),
+          )
+          .where(ThemeProducer.similarExtensions.containsKey),
+    ).toSet();
+    return neededParams;
   }
 }

@@ -10,6 +10,7 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
   ThemeProducer(super.emitter, this._extDataProducer);
 
   final ExtProducer _extDataProducer;
+  static final similarExtensions = <String, SimilarExt>{};
 
   @override
   Spec spec(Set<DartType> input) {
@@ -20,11 +21,10 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
       (e) => e.getDisplayString(withNullability: false).splitPascalCase(),
     );
     // similar extensions
-    final similarExtensions = <String, SimilarExt>{};
     for (final ext in splittedInput) {
       for (final ext2 in splittedInput) {
         var matching = 1;
-        for (var i = 1; i < ext.length; i++) {
+        for (var i = 1; i < ext.length && i < ext2.length; i++) {
           final el = ext[i];
           final el2 = ext2[i];
           if (el == el2) {

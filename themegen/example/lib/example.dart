@@ -6,7 +6,7 @@ part 'example.g.dart';
 @ThemeGen(
   extensions: {
     _$AppColorsLight,
-    _$AppFontStyles,
+    _$AppFontStylesLight,
   },
 )
 abstract class _$AppThemeLight {}
@@ -14,7 +14,7 @@ abstract class _$AppThemeLight {}
 @ThemeGen(
   extensions: {
     _$AppColorsDark,
-    _$AppFontStyles,
+    _$AppFontStylesDark,
   },
 )
 class _$AppThemeDark {}
@@ -29,7 +29,13 @@ class _$AppColorsDark {
   static const Color secondary = Color(0xFF000000);
 }
 
-class _$AppFontStyles {
+class _$AppFontStylesLight {
+  static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
+        color: colors.primary,
+      );
+}
+
+class _$AppFontStylesDark {
   static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
         color: colors.primary,
       );

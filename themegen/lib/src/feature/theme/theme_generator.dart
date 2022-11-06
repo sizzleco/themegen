@@ -15,10 +15,8 @@ class ThemeGenerator extends Generator {
   @override
   String generate(LibraryReader library, BuildStep buildStep) {
     // get classes only annotated with @ThemeGen
-    final classes = library
-        .annotatedWith(_typeChecker)
-        .map((e) => e.element)
-        .whereType<ClassElement>();
+    final classes =
+        library.annotatedWith(_typeChecker).map((e) => e.element).whereType<ClassElement>();
     // get only @ThemeGen annotations
     final metadatas = classes.annotationsOf<ThemeGen>();
     // get unique extensions from @ThemeGen annotations
