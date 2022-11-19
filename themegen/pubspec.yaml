@@ -21,6 +21,7 @@ dependencies:
   analyzer: 5.1.0
   code_builder: 4.3.0
   pure: 0.2.0
+  meta: ^1.8.0
   
 dev_dependencies:
   flutter_test:

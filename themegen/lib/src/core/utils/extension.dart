@@ -132,14 +132,14 @@ extension MethodX on MethodElement {
   Iterable<String> paramsToFillLower() {
     final params = getParamsForMethod().expand((element) => element.split(' '));
     final whereParams = params
-        .where(ThemeProducer.similarExtensions.containsKey)
+        .where(ThemeProducer.extensions.containsKey)
         .map((e) => e[0].toLowerCase() + e.substring(1));
     return whereParams;
   }
 
   Iterable<String> paramsToFill() {
     final params = getParamsForMethod().expand((element) => element.split(' '));
-    final whereParams = params.where(ThemeProducer.similarExtensions.containsKey);
+    final whereParams = params.where(ThemeProducer.extensions.containsKey);
     return whereParams;
   }
 }
@@ -152,7 +152,7 @@ extension MethodListX on Iterable<MethodElement> {
           .expand(
             (element) => element.split(' '),
           )
-          .where(ThemeProducer.similarExtensions.containsKey),
+          .where(ThemeProducer.extensions.containsKey),
     ).toSet();
     return neededParams;
   }

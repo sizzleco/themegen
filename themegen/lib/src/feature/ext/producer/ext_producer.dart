@@ -3,18 +3,18 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:themegen/src/core/logic/code_producer.dart';
 import 'package:themegen/src/core/utils/extension.dart';
-import 'package:themegen/src/feature/ext/model/data_extension.dart';
+import 'package:themegen/src/feature/ext/model/extension.dart' as model;
+import 'package:themegen/src/feature/ext/model/extension.dart';
 import 'package:themegen/src/feature/theme/theme_producer.dart';
 
-class ExtProducer extends CodeProducer<DataExtension> {
+class ExtProducer extends CodeProducer<model.Extension> {
   ExtProducer(super.emitter);
 
   @override
-  Spec spec(DataExtension input) {
+  Spec spec(model.Extension input) {
     final dataClass = _extensionClass(
-      input.dataClassName,
-      input.extensions,
-      input.index,
+      input.name,
+      input.types,
     );
     return Library(
       (builder) => builder.body
@@ -26,8 +26,8 @@ class ExtProducer extends CodeProducer<DataExtension> {
 
   /// generates extension class that extends ThemeExtension
   /// to fulfil the contract
-  Class _extensionClass(String className, Set<DartType> types, int index) {
-    final type = types.first;
+  Class _extensionClass(String className, Set<TypeExtension> types) {
+    final type = types.first.type;
     final cl = type.element2;
     if (cl == null || cl is! ClassElement) {
       throw Exception('Type $type is not a class');
@@ -46,10 +46,9 @@ class ExtProducer extends CodeProducer<DataExtension> {
         )
         ..methods.addAll([
           ...types.map(
-            (e) => _extensionStaticMethod(
+            (typeExtension) => _extensionStaticMethod(
               className,
-              e,
-              index,
+              typeExtension,
             ),
           ),
           _lerp(
@@ -243,14 +242,14 @@ class ExtProducer extends CodeProducer<DataExtension> {
   /// generates static method like
   ///
   /// {YOUR_NAMESPACE}.${light}() => ...
-  Method _extensionStaticMethod(String className, DartType type, int index) {
-    final display = type.getDisplayString(withNullability: false);
-    final name = display.splitPascalCase().sublist(index);
-    final cl = type.element2;
+  Method _extensionStaticMethod(String className, TypeExtension ext) {
+    final cl = ext.type.element2;
+    final name = ext.name.lowerCaseFirst;
+    final type = ext.type;
     if (cl == null || cl is! ClassElement) {
-      throw Exception('Type $type is not a class');
+      throw Exception('Type ${ext.type} is not a class');
     }
-    name[0] = name[0].toLowerCase();
+    // make first letter lowercase
     return Method(
       (builder) => builder
         ..static = true
@@ -274,7 +273,7 @@ class ExtProducer extends CodeProducer<DataExtension> {
           )
         ''')
         ..returns = refer(className)
-        ..name = name.join(),
+        ..name = name,
     );
   }
 
@@ -387,7 +386,7 @@ class ExtProducer extends CodeProducer<DataExtension> {
                   ..name = method.name
                   ..named = true
                   ..type = refer(
-                    '${method.returnType} Function(${method.getParamsForMethod().toSet().expand((e) => e.split(' ')).where(ThemeProducer.similarExtensions.containsKey).join(', ')})?',
+                    '${method.returnType} Function(${method.getParamsForMethod().toSet().expand((e) => e.split(' ')).where(ThemeProducer.extensions.containsKey).join(', ')})?',
                   ),
               ),
             ...methods.paramsForMethods().map(

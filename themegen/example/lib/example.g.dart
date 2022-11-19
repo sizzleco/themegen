@@ -71,46 +71,28 @@ class AppColors extends ThemeExtension<AppColors> {
 }
 
 class AppFontStyles extends ThemeExtension<AppFontStyles> {
-  AppFontStyles({
-    required TextStyle Function(AppColors, AppColors) h1,
-    required AppColors appColors,
-  })  : h1 = h1(appColors, appColors),
-        _$h1 = h1,
-        _$appColors = appColors;
+  AppFontStyles({required TextStyle Function() h1})
+      : h1 = h1(),
+        _$h1 = h1;
 
   AppFontStyles._lerp({
-    required TextStyle Function(AppColors, AppColors) h1,
-    required AppColors appColors,
+    required TextStyle Function() h1,
     required double t,
     required AppFontStyles other,
-  })  : h1 = TextStyle.lerp(
-            h1(appColors, appColors), other._$h1(appColors, appColors), t)!,
-        _$h1 = h1,
-        _$appColors = appColors;
+  })  : h1 = TextStyle.lerp(h1(), other._$h1(), t)!,
+        _$h1 = h1;
 
   final TextStyle h1;
 
-  final TextStyle Function(AppColors, AppColors) _$h1;
-
-  final AppColors _$appColors;
+  final TextStyle Function() _$h1;
 
   @factory
-  static AppFontStyles light({
-    TextStyle Function(AppColors, AppColors)? h1,
-    required AppColors appColors,
-  }) =>
-      AppFontStyles(
+  static AppFontStyles light({TextStyle Function()? h1}) => AppFontStyles(
         h1: h1 ?? _$AppFontStylesLight.h1,
-        appColors: appColors,
       );
   @factory
-  static AppFontStyles dark({
-    TextStyle Function(AppColors, AppColors)? h1,
-    required AppColors appColors,
-  }) =>
-      AppFontStyles(
+  static AppFontStyles dark({TextStyle Function()? h1}) => AppFontStyles(
         h1: h1 ?? _$AppFontStylesDark.h1,
-        appColors: appColors,
       );
   @override
   AppFontStyles lerp(
@@ -124,15 +106,51 @@ class AppFontStyles extends ThemeExtension<AppFontStyles> {
       other: other,
       t: t,
       h1: _$h1,
-      appColors: _$appColors,
     );
   }
 
   @override
-  AppFontStyles copyWith({
-    TextStyle Function(AppColors, AppColors)? h1,
-    AppColors? appColors,
-  }) {
-    return AppFontStyles(h1: h1 ?? _$h1, appColors: appColors ?? _$appColors);
+  AppFontStyles copyWith({TextStyle Function()? h1}) {
+    return AppFontStyles(
+      h1: h1 ?? _$h1,
+    );
+  }
+}
+
+class AppBundles extends ThemeExtension<AppBundles> {
+  AppBundles({required this.aboba});
+
+  AppBundles._lerp({
+    required Color aboba,
+    required double t,
+    required AppBundles other,
+  }) : aboba = Color.lerp(aboba, other.aboba, t)!;
+
+  final Color aboba;
+
+  @factory
+  static AppBundles appBundles({Color? aboba}) => AppBundles(
+        aboba: aboba ?? _$AppBundles.aboba,
+      );
+  @override
+  AppBundles lerp(
+    ThemeExtension<AppBundles>? other,
+    double t,
+  ) {
+    if (other is! AppBundles) {
+      return this;
+    }
+    return AppBundles._lerp(
+      other: other,
+      t: t,
+      aboba: aboba,
+    );
+  }
+
+  @override
+  AppBundles copyWith({Color? aboba}) {
+    return AppBundles(
+      aboba: aboba ?? this.aboba,
+    );
   }
 }
