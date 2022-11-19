@@ -18,7 +18,8 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
 
   @override
   Spec spec(Set<DartType> input) {
-    // e.g. for _$AppColorsLight, _$AppColorsDark, _$AppFontStylesLight, _$AppFontStylesDark it will be
+    // an algorigthm to find all the similar extensions, split them on groups
+    // for _$AppColorsLight, _$AppColorsDark, _$AppFontStylesLight, _$AppFontStylesDark it will be
     // {
     //   'AppColors': {
     //     'light': _$AppColorsLight,
@@ -29,18 +30,23 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
     //     'dark': _$AppFontStylesDark,
     //   },
     // }
+    // firstly, we split classes by pascal case
     final splittedByPascalCase = input
         .map(
           (e) => e.getDisplayString(withNullability: false).splitPascalCase(),
         )
+        // remove underscore
         .map((e) => e.where(whereNotUnderscore).toList());
 
     final inputModels = splittedByPascalCase.mapIndexed(
-      (index, e) => InputModel(input.elementAt(index), e),
+      (index, pascalCased) => InputModel(input.elementAt(index), pascalCased),
     );
 
+    /// similar extensions where key is a name of extension,
+    /// and value is a set of other styles of the same extension
     final extensionResults = <String, Set<TypeExtension>>{};
     final addedExtensions = <InputModel>{};
+
     for (final el1 in inputModels) {
       for (final el2 in inputModels) {
         if (el1.pascalCase.join() == el2.pascalCase.join()) continue;
@@ -56,6 +62,11 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
             return shouldTake;
           },
         ).toList();
+        // If common part is bigger than 1, it means that we found similar extensions
+        // still, a discussion question
+        // it is considered that each style should have some prefix, for example App
+        // but, if prefix consists of 2 words(in pascal case) this won't work correct
+        // so it is needed to dynamically find the prefix. See themegen#11
         if (common.length >= 2) {
           final key = common.join();
           extensionResults[key] ??= {};
@@ -65,25 +76,23 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
         }
       }
     }
-
-    print('extensionResults: $extensionResults');
-
+    // find extensions that are not similar to any other
+    // if an extension is not similar then it is considered as a base extension
+    // that can be reused in themes
     for (final inputModel in inputModels) {
       if (addedExtensions.any((element) => element.type == inputModel.type)) continue;
       final key = inputModel.pascalCase.join();
       extensionResults[key] ??= {};
       extensionResults[key]!.add(inputModel.typeExt(0));
     }
-
-    print('extensionResults: $extensionResults');
-
+    // convert extensions to model
     final extensions = extensionResults.entries.map(
       (e) => model.Extension(
         name: e.key,
         types: e.value,
       ),
     );
-
+    // generate extension code
     return Library(
       (builder) => builder
         ..body.addAll(
