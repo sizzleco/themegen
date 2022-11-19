@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
   themegen_annotation:
     path: ../themegen_annotation
-  source_gen: 1.2.5
+  source_gen: ^1.2.6
   build: 2.3.1
   analyzer: 5.1.0
   code_builder: 4.3.0
