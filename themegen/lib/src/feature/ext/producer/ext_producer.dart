@@ -26,8 +26,11 @@ class ExtProducer extends CodeProducer<model.Extension> {
 
   /// generates extension class that extends ThemeExtension
   /// to fulfil the contract
-  Class _extensionClass(String className, Set<TypeExtension> types) {
-    final type = types.first.type;
+  Class _extensionClass(String className, Set<TypeExtension> extensions) {
+    // there is no matter which extension we take, it could be first, last or even random
+    // because each extension has the same properties
+    // if it doesn't have such, we will throw an exception
+    final type = extensions.first.type;
     final cl = type.element2;
     if (cl == null || cl is! ClassElement) {
       throw Exception('Type $type is not a class');
@@ -45,7 +48,7 @@ class ExtProducer extends CodeProducer<model.Extension> {
           _fieldsFromMethods(staticMethods),
         )
         ..methods.addAll([
-          ...types.map(
+          ...extensions.map(
             (typeExtension) => _extensionStaticMethod(
               className,
               typeExtension,
