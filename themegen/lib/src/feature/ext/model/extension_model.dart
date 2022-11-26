@@ -15,6 +15,7 @@ class ParentExtension {
 @immutable
 class ExtensionType {
   final DartType type;
+
   final String name;
 
   const ExtensionType({required this.type, required this.name});

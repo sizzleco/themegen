@@ -2,7 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:themegen/src/core/utils/extension.dart';
+import 'package:themegen/src/core/utils/extensions.dart';
 import 'package:themegen/src/feature/theme/theme_producer.dart';
 import 'package:themegen_annotation/themegen_annotation.dart';
 

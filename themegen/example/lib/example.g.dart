@@ -13,8 +13,8 @@ class AppColors extends ThemeExtension<AppColors> {
   });
 
   AppColors._lerp({
-    required Color primary,
-    required Color secondary,
+    Color? primary,
+    Color? secondary,
     required double t,
     required AppColors other,
   })  : primary = Color.lerp(primary, other.primary, t)!,
@@ -140,7 +140,7 @@ class AppBundles extends ThemeExtension<AppBundles> {
   AppBundles({required this.aboba});
 
   AppBundles._lerp({
-    required Color aboba,
+    Color? aboba,
     required double t,
     required AppBundles other,
   }) : aboba = Color.lerp(aboba, other.aboba, t)!;

@@ -2,9 +2,9 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:themegen/src/core/logic/code_producer.dart';
-import 'package:themegen/src/core/utils/extension.dart';
-import 'package:themegen/src/feature/ext/model/extension.dart' as model;
-import 'package:themegen/src/feature/ext/model/extension.dart';
+import 'package:themegen/src/core/utils/extensions.dart';
+import 'package:themegen/src/feature/ext/model/extension_model.dart' as model;
+import 'package:themegen/src/feature/ext/model/extension_model.dart';
 import 'package:themegen/src/feature/ext/model/input_model.dart';
 import 'package:themegen/src/feature/ext/logic/ext_producer.dart';
 

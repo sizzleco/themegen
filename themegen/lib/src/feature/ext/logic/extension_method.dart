@@ -1,9 +1,9 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:themegen/src/core/utils/extension.dart';
+import 'package:themegen/src/core/utils/extensions.dart';
 import 'package:themegen/src/feature/ext/logic/convert.dart';
 import 'package:themegen/src/feature/ext/model/elements.dart';
-import 'package:themegen/src/feature/ext/model/extension.dart';
+import 'package:themegen/src/feature/ext/model/extension_model.dart';
 
 /// generates static method like
 ///

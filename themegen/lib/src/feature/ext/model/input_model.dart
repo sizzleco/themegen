@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
-import 'package:themegen/src/feature/ext/model/extension.dart';
+import 'package:themegen/src/feature/ext/model/extension_model.dart';
 
 @immutable
 class InputModel {

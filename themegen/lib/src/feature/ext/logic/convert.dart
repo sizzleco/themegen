@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:themegen/src/core/utils/extension.dart';
+import 'package:themegen/src/core/utils/extensions.dart';
 import 'package:themegen/src/feature/ext/model/elements.dart';
 
 extension Convert on Never {
