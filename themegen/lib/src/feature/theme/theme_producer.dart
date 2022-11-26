@@ -6,13 +6,13 @@ import 'package:themegen/src/core/utils/extension.dart';
 import 'package:themegen/src/feature/ext/model/extension.dart' as model;
 import 'package:themegen/src/feature/ext/model/extension.dart';
 import 'package:themegen/src/feature/ext/model/input_model.dart';
-import 'package:themegen/src/feature/ext/producer/ext_producer.dart';
+import 'package:themegen/src/feature/ext/logic/ext_producer.dart';
 
 class ThemeProducer extends CodeProducer<Set<DartType>> {
   ThemeProducer(super.emitter, this._extProducer);
 
   final ExtProducer _extProducer;
-  static final extensions = <String, model.Extension>{};
+  static final extensions = <String, model.ParentExtension>{};
 
   static bool whereNotUnderscore(String string) => !string.startsWith('_');
 
@@ -44,7 +44,7 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
 
     /// similar extensions where key is a name of extension,
     /// and value is a set of other styles of the same extension
-    final extensionResults = <String, Set<TypeExtension>>{};
+    final extensionResults = <String, Set<ExtensionType>>{};
     final addedExtensions = <InputModel>{};
 
     for (final el1 in inputModels) {
@@ -87,7 +87,7 @@ class ThemeProducer extends CodeProducer<Set<DartType>> {
     }
     // convert extensions to model
     final extensions = extensionResults.entries.map(
-      (e) => model.Extension(
+      (e) => model.ParentExtension(
         name: e.key,
         types: e.value,
       ),

@@ -24,8 +24,8 @@ class InputModel {
   @override
   String toString() => 'InputModel{type: $type, pascalCase: $pascalCase}';
 
-  /// convert [InputModel] to [TypeExtension]
-  TypeExtension typeExt(int length) => TypeExtension(
+  /// convert [InputModel] to [ExtensionType]
+  ExtensionType typeExt(int length) => ExtensionType(
         type: type,
         name: pascalCase.sublist(length).join(),
       );

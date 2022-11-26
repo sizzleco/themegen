@@ -71,28 +71,45 @@ class AppColors extends ThemeExtension<AppColors> {
 }
 
 class AppFontStyles extends ThemeExtension<AppFontStyles> {
-  AppFontStyles({required TextStyle Function() h1})
-      : h1 = h1(),
-        _$h1 = h1;
+  AppFontStyles({
+    required TextStyle Function(AppColors) h1,
+    required AppColors colors,
+  })  : h1 = h1(colors),
+        _$h1 = h1,
+        colors = colors;
 
   AppFontStyles._lerp({
-    required TextStyle Function() h1,
+    required TextStyle Function(AppColors) h1,
+    required AppColors colors,
     required double t,
     required AppFontStyles other,
-  })  : h1 = TextStyle.lerp(h1(), other._$h1(), t)!,
-        _$h1 = h1;
+  })  : h1 = TextStyle.lerp(h1(colors), other._$h1(colors), t)!,
+        _$h1 = h1,
+        colors = colors;
+
+  final AppColors colors;
 
   final TextStyle h1;
 
-  final TextStyle Function() _$h1;
+  final TextStyle Function(AppColors colors) _$h1;
 
   @factory
-  static AppFontStyles light({TextStyle Function()? h1}) => AppFontStyles(
+  static AppFontStyles light({
+    TextStyle Function(AppColors)? h1,
+    required AppColors colors,
+  }) =>
+      AppFontStyles(
         h1: h1 ?? _$AppFontStylesLight.h1,
+        colors: colors,
       );
   @factory
-  static AppFontStyles dark({TextStyle Function()? h1}) => AppFontStyles(
+  static AppFontStyles dark({
+    TextStyle Function(AppColors)? h1,
+    required AppColors colors,
+  }) =>
+      AppFontStyles(
         h1: h1 ?? _$AppFontStylesDark.h1,
+        colors: colors,
       );
   @override
   AppFontStyles lerp(
@@ -106,14 +123,16 @@ class AppFontStyles extends ThemeExtension<AppFontStyles> {
       other: other,
       t: t,
       h1: _$h1,
+      colors: colors,
     );
   }
 
   @override
-  AppFontStyles copyWith({TextStyle Function()? h1}) {
-    return AppFontStyles(
-      h1: h1 ?? _$h1,
-    );
+  AppFontStyles copyWith({
+    TextStyle Function(AppColors)? h1,
+    AppColors? colors,
+  }) {
+    return AppFontStyles(h1: h1 ?? _$h1, colors: colors ?? this.colors);
   }
 }
 

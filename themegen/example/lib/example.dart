@@ -36,13 +36,13 @@ class _$AppColorsDark {
 }
 
 class _$AppFontStylesLight {
-  static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
+  static TextStyle h1(AppColors colors) => TextStyle(
         color: colors.primary,
       );
 }
 
 class _$AppFontStylesDark {
-  static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
+  static TextStyle h1(AppColors colors) => TextStyle(
         color: colors.primary,
       );
 }

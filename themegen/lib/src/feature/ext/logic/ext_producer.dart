@@ -3,15 +3,16 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:themegen/src/core/logic/code_producer.dart';
 import 'package:themegen/src/core/utils/extension.dart';
-import 'package:themegen/src/feature/ext/model/extension.dart' as model;
+import 'package:themegen/src/feature/ext/logic/convert.dart';
+import 'package:themegen/src/feature/ext/logic/extension.dart';
+import 'package:themegen/src/feature/ext/model/elements.dart';
 import 'package:themegen/src/feature/ext/model/extension.dart';
-import 'package:themegen/src/feature/theme/theme_producer.dart';
 
-class ExtProducer extends CodeProducer<model.Extension> {
+class ExtProducer extends CodeProducer<ParentExtension> {
   ExtProducer(super.emitter);
 
   @override
-  Spec spec(model.Extension input) {
+  Spec spec(ParentExtension input) {
     final dataClass = _extensionClass(
       input.name,
       input.types,
@@ -26,7 +27,7 @@ class ExtProducer extends CodeProducer<model.Extension> {
 
   /// generates extension class that extends ThemeExtension
   /// to fulfil the contract
-  Class _extensionClass(String className, Set<TypeExtension> extensions) {
+  Class _extensionClass(String className, Set<ExtensionType> extensions) {
     // there is no matter which extension we take, it could be first, last or even random
     // because each extension has the same properties
     // if it doesn't have such, we will throw an exception
@@ -35,34 +36,40 @@ class ExtProducer extends CodeProducer<model.Extension> {
     if (cl == null || cl is! ClassElement) {
       throw Exception('Type $type is not a class');
     }
+    // all static [FieldElement]s for the class
     final staticFields = cl.fields.where((f) => f.isStatic);
+    // all static [MethodElement]s for the class
     final staticMethods = cl.methods.where((m) => m.isStatic);
+    // all fields that are static + fields extracted from [MethodElement] params
+    final $onlyMethods = Convert.convertMethods(methods: staticMethods);
+    final $onlyFields = Convert.convertFields(fields: staticFields);
+    final $allFields = Convert.convertAllFields(
+      fields: staticFields,
+      methods: $onlyMethods,
+    );
     return Class(
       (builder) => builder
         ..name = className
         ..extend = refer('ThemeExtension<$className>')
         ..fields.addAll(
-          _fields(staticFields),
-        )
-        ..fields.addAll(
-          _fieldsFromMethods(staticMethods),
+          _generateFields($allFields),
         )
         ..methods.addAll([
           ...extensions.map(
-            (typeExtension) => _extensionStaticMethod(
+            (typeExtension) => extensionMethod(
               className,
               typeExtension,
             ),
           ),
           _lerp(
             className,
-            staticFields,
-            staticMethods,
+            $onlyFields,
+            $onlyMethods,
           ),
           _copyWith(
             className,
-            staticFields,
-            staticMethods,
+            $onlyFields,
+            $onlyMethods,
           ),
         ])
         ..constructors.addAll(
@@ -71,22 +78,22 @@ class ExtProducer extends CodeProducer<model.Extension> {
               (builder) => builder
                 ..optionalParameters.addAll(
                   _params(
-                    cl.fields,
+                    $onlyFields,
                     type,
                     required: true,
                     toThis: true,
                   ),
                 )
                 ..optionalParameters.addAll(
-                  _paramsFromMethods(staticMethods),
+                  _paramsFromMethods($onlyMethods),
                 )
                 ..initializers.addAll(
-                  _initializersFromMethods(staticMethods),
+                  _initializersFromMethods($onlyMethods),
                 ),
             ),
             _lerpConstructor(
-              staticFields,
-              staticMethods,
+              $onlyFields,
+              $onlyMethods,
               type,
               className,
             ),
@@ -95,28 +102,9 @@ class ExtProducer extends CodeProducer<model.Extension> {
     );
   }
 
-  Iterable<Code> _lerpConstructorInitializers(
-    Iterable<FieldElement> fields,
-    Iterable<MethodElement> methods,
-  ) sync* {
-    for (final field in fields) {
-      final name = field.name;
-      yield Code('$name = ${field.type}.lerp($name, other.$name, t)!');
-    }
-    for (final method in methods) {
-      final name = method.name;
-      final params = method.paramsToFillLower();
-      yield Code(
-        '$name = ${method.returnType}.lerp($name(${params.join(',')}), other._\$$name(${params.join(',')}), t)!',
-      );
-      yield Code('_\$$name = $name');
-      yield* method.paramsToFillLower().toSet().map((e) => Code('_\$$e = $e'));
-    }
-  }
-
   Constructor _lerpConstructor(
-    Iterable<FieldElement> fields,
-    Iterable<MethodElement> methods,
+    Iterable<ExtensionField> fields,
+    Iterable<ExtensionMethod> methods,
     DartType type,
     String className,
   ) =>
@@ -151,149 +139,89 @@ class ExtProducer extends CodeProducer<model.Extension> {
           ),
       );
 
+  Iterable<Code> _lerpConstructorInitializers(
+    Iterable<ExtensionField> fields,
+    Iterable<ExtensionMethod> methods,
+  ) sync* {
+    for (final field in fields) {
+      final name = field.name;
+      yield Code('$name = ${field.type}.lerp($name, other.$name, t)!');
+    }
+    for (final method in methods) {
+      final name = method.name;
+      final params = method.parameters;
+      final onlyNames = params.map((p) => p.name).join(', ');
+      yield Code(
+        '$name = ${method.returnType}.lerp($name($onlyNames), other._\$$name($onlyNames), t)!',
+      );
+      yield Code('_\$$name = $name');
+      yield* params.toSet().map((param) => Code('${param.name} = ${param.name}'));
+    }
+  }
+
   Iterable<Code> _initializersFromMethods(
-    Iterable<MethodElement> methods,
+    Iterable<ExtensionMethod> methods,
   ) sync* {
     yield* methods.map(
-      (m) => Code('${m.name} = ${m.name}(${m.paramsToFillLower().join(', ')})'),
+      (m) {
+        final params = m.parameters.map((p) => p.name).join(',');
+        return Code('${m.name} = ${m.name}($params)');
+      },
     );
     yield* methods.map(
       (m) => Code('_\$${m.name} = ${m.name}'),
     );
-    yield* methods.paramsForMethods().map(
-          (param) => Code(
-            '_\$${param.lowerCaseFirst} = ${param.lowerCaseFirst}',
-          ),
+    final params = methods.expand<ExtensionParameter>((m) => m.parameters);
+    yield* params.toSet().map(
+          (p) => Code('${p.name} = ${p.name}'),
         );
   }
 
   Iterable<Parameter> _paramsFromMethods(
-    Iterable<MethodElement> methods, {
+    Iterable<ExtensionMethod> methods, {
     bool required = true,
   }) sync* {
     yield* methods.map(
       (m) {
-        final returnType = m.returnType.getDisplayString(withNullability: true);
-
+        final returnType = m.returnType;
+        final params = m.parameters;
+        final types = params.map((e) => e.type).join(', ');
         return Parameter(
           (builder) => builder
             ..name = m.name
             ..named = true
             ..required = required
             ..type = refer(
-              '$returnType Function(${m.paramsToFill().join(', ')})${required ? '' : '?'}',
+              '$returnType Function($types)${required ? '' : '?'}',
             ),
         );
       },
     );
-    yield* methods.paramsForMethods().map(
+    yield* methods.expand((element) => element.parameters).map(
           (e) => Parameter(
             (builder) => builder
-              ..name = e.lowerCaseFirst
+              ..name = e.name
               ..named = true
-              ..type = refer(e)
+              ..type = refer(e.type)
               ..required = true,
           ),
         );
   }
 
-  Iterable<Field> _fieldsFromMethods(
-    Iterable<MethodElement> methods,
-  ) sync* {
-    yield* methods.map(
-      (m) {
-        if (m.returnType.isDynamic) {
-          throw UnsupportedError(
-            'Return Type is required for method, '
-            'but it was not specified \n$m',
-          );
-        }
-        return Field(
-          (builder) => builder
-            ..name = m.name
-            ..type = refer(
-              m.returnType.getDisplayString(
-                withNullability: true,
-              ),
-            )
-            ..modifier = FieldModifier.final$,
-        );
-      },
-    );
-    yield* methods.map((m) {
-      final returnType = m.returnType.getDisplayString(
-        withNullability: true,
-      );
-      return Field(
-        (builder) => builder
-          ..name = '_\$${m.name}'
-          ..type = refer('$returnType Function(${m.paramsToFill().join(', ')})')
-          ..modifier = FieldModifier.final$,
-      );
-    });
-
-    yield* methods.paramsForMethods().map(
-          (param) => Field(
-            (builder) => builder
-              ..name = '_\$' + param.lowerCaseFirst
-              ..type = refer(param)
-              ..modifier = FieldModifier.final$,
-          ),
-        );
-  }
-
-  /// generates static method like
-  ///
-  /// {YOUR_NAMESPACE}.${light}() => ...
-  Method _extensionStaticMethod(String className, TypeExtension ext) {
-    final cl = ext.type.element2;
-    final name = ext.name.lowerCaseFirst;
-    final type = ext.type;
-    if (cl == null || cl is! ClassElement) {
-      throw Exception('Type ${ext.type} is not a class');
-    }
-    // make first letter lowercase
-    return Method(
-      (builder) => builder
-        ..static = true
-        ..annotations.add(refer('factory'))
-        ..lambda = true
-        ..optionalParameters.addAll([
-          ..._params(
-            cl.fields,
-            type,
-          ),
-          ..._paramsFromMethods(
-            cl.methods,
-            required: false,
-          ),
-        ])
-        ..body = Code('''
-        $className(
-          ${cl.fields.map((e) => '${e.displayName}: ${e.displayName} ?? ${cl.displayName}.${e.displayName}').joinParams(',')}
-          ${cl.methods.map((e) => '${e.displayName}: ${e.displayName} ?? ${cl.displayName}.${e.displayName}').joinParams(',')}
-          ${cl.methods.paramsForMethods().map((e) => '${e.lowerCaseFirst}: ${e.lowerCaseFirst}').joinParams(',')}
-          )
-        ''')
-        ..returns = refer(className)
-        ..name = name,
-    );
-  }
-
-  Iterable<Field> _fields(
-    Iterable<FieldElement> fields,
+  Iterable<Field> _generateFields(
+    Iterable<ExtensionField> fields,
   ) =>
       fields.map(
-        (e) => Field(
+        (field) => Field(
           (builder) => builder
-            ..name = e.name
             ..modifier = FieldModifier.final$
-            ..type = refer(e.type.getDisplayString(withNullability: false)),
+            ..name = field.name
+            ..type = refer(field.type),
         ),
       );
 
   Iterable<Parameter> _params(
-    Iterable<FieldElement> fields,
+    Iterable<ExtensionField> fields,
     DartType type, {
     bool named = true,
     bool required = false,
@@ -301,29 +229,29 @@ class ExtProducer extends CodeProducer<model.Extension> {
     bool defaultTo = false,
   }) =>
       fields.map(
-        (e) => Parameter(
+        (field) => Parameter(
           (builder) => builder
-            ..name = e.name
+            ..name = field.name
             ..named = named
             ..required = required
             ..toThis = toThis
             ..defaultTo = defaultTo
                 ? Code(
-                    type.getDisplayString(withNullability: false) + '.${e.name}',
+                    type.getDisplayString(withNullability: false) + '.${field.name}',
                   )
                 : null
             ..type = toThis
                 ? null
                 : refer(
-                    '${e.type.getDisplayString(withNullability: false)}${required ? '' : '?'}',
+                    '${field.type}${required ? '' : '?'}',
                   ),
         ),
       );
 
   Method _lerp(
     String className,
-    Iterable<FieldElement> fields,
-    Iterable<MethodElement> methods,
+    Iterable<ExtensionField> fields,
+    Iterable<ExtensionMethod> methods,
   ) =>
       Method(
         (builder) => builder
@@ -349,17 +277,17 @@ class ExtProducer extends CodeProducer<model.Extension> {
             return $className._lerp(
               other: other,
               t: t,
-              ${methods.map((e) => '${e.name}: _\$${e.name}').joinParams(',')}
-              ${methods.paramsForMethods().map((e) => '${e.lowerCaseFirst}: _\$${e.lowerCaseFirst}').joinParams(',')}
               ${fields.map((e) => '${e.name}: ${e.name}').joinParams(',')}
+              ${methods.map((e) => '${e.name}: _\$${e.name}').joinParams(',')}
+              ${methods.expand((e) => e.parameters).map((e) => '${e.name}: ${e.name}').joinParams(',')}
             );
             '''),
       );
 
   Method _copyWith(
     String className,
-    Iterable<FieldElement> fields,
-    Iterable<MethodElement> methods,
+    Iterable<ExtensionField> fields,
+    Iterable<ExtensionMethod> methods,
   ) =>
       Method(
         (builder) => builder
@@ -370,7 +298,7 @@ class ExtProducer extends CodeProducer<model.Extension> {
           return $className(
             ${fields.map<String>((f) => '${f.name}: ${f.name} ?? this.${f.name}').join(',')}
             ${methods.map((m) => '${m.name}: ${m.name} ?? _\$${m.name}').join(',')},
-            ${methods.paramsForMethods().map((e) => '${e.lowerCaseFirst}: ${e.lowerCaseFirst} ?? _\$${e.lowerCaseFirst}').join(',')}
+            ${methods.expand((m) => m.parameters).map((p) => '${p.name}: ${p.name} ?? this.${p.name}').join(',')}
           );
         ''')
           ..optionalParameters.addAll([
@@ -380,24 +308,27 @@ class ExtProducer extends CodeProducer<model.Extension> {
                   ..name = field.name
                   ..named = true
                   ..type = refer(
-                    field.type.getDisplayString(withNullability: false) + '?',
+                    '${field.type}?',
                   ),
               ),
             for (final method in methods)
               Parameter(
-                (builder) => builder
-                  ..name = method.name
-                  ..named = true
-                  ..type = refer(
-                    '${method.returnType} Function(${method.getParamsForMethod().toSet().expand((e) => e.split(' ')).where(ThemeProducer.extensions.containsKey).join(', ')})?',
-                  ),
+                (builder) {
+                  final params = method.parameters.map((method) => method.type).join(', ');
+                  builder
+                    ..name = method.name
+                    ..named = true
+                    ..type = refer(
+                      '${method.returnType} Function($params)?',
+                    );
+                },
               ),
-            ...methods.paramsForMethods().map(
+            ...methods.expand((method) => method.parameters).map(
                   (param) => Parameter(
                     (builder) => builder
-                      ..name = param.lowerCaseFirst
+                      ..name = param.name
                       ..named = true
-                      ..type = refer('$param?'),
+                      ..type = refer('${param.type}?'),
                   ),
                 )
           ]),
