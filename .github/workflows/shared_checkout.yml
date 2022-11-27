@@ -33,7 +33,7 @@ jobs:
         timeout-minutes: 1
         working-directory: ${{ inputs.directory }}
         run: |
-          flutter format --set-exit-if-changed -l 80 .
+          flutter format --set-exit-if-changed -l 100 .
 
       - name: 📈 Check analyzer
         timeout-minutes: 1

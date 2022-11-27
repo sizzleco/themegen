@@ -7,6 +7,7 @@ part 'example.g.dart';
   extensions: {
     _$AppColorsLight,
     _$AppFontStylesLight,
+    _$AppBundles,
   },
 )
 abstract class _$AppThemeLight {}
@@ -15,9 +16,14 @@ abstract class _$AppThemeLight {}
   extensions: {
     _$AppColorsDark,
     _$AppFontStylesDark,
+    _$AppBundles,
   },
 )
 class _$AppThemeDark {}
+
+class _$AppBundles {
+  static const Color aboba = Colors.black12;
+}
 
 class _$AppColorsLight {
   static const Color primary = Color(0xFF000000);
@@ -30,13 +36,13 @@ class _$AppColorsDark {
 }
 
 class _$AppFontStylesLight {
-  static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
+  static TextStyle h1(AppColors colors) => TextStyle(
         color: colors.primary,
       );
 }
 
 class _$AppFontStylesDark {
-  static TextStyle h1(AppColors colors, AppColors colors2) => TextStyle(
+  static TextStyle h1(AppColors colors) => TextStyle(
         color: colors.primary,
       );
 }

@@ -2,7 +2,7 @@ import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:pure/pure.dart';
-import 'package:themegen/src/feature/theme/theme_producer.dart';
+import 'package:themegen/src/feature/ext/model/elements.dart';
 
 extension StringX on String {
   String get capitalized => this[0].toUpperCase() + substring(1);
@@ -84,7 +84,7 @@ extension UniqueNestedX<T> on Iterable<Iterable<T?>?> {
 }
 
 extension MethodX on MethodElement {
-  List<String> getParamsForMethod() {
+  List<ExtensionParameter> getParamsForMethod() {
     final element = this;
     final session = element.session;
     final parsed = session?.getParsedLibraryByElement(element.library) as ParsedLibraryResult?;
@@ -92,7 +92,7 @@ extension MethodX on MethodElement {
     final node = declaration?.node;
     if (node == null) return [];
     Token? token = node.beginToken;
-    final types = <String>[];
+    final types = <ExtensionParameter>[];
 
     var isParenthesis = false;
     while (token != null && token != node.endToken) {
@@ -122,38 +122,33 @@ extension MethodX on MethodElement {
             return Tram.call(() => isolateParameters(combined, token));
           }
 
-          types.add(isolateParameters.bounce(lexeme, token));
+          final parameter = isolateParameters.bounce(lexeme, token);
+          final split = parameter.split(' ');
+          // only decorators
+          final decorators = split.where((token) => token.startsWith('@')).toList();
+          final tokensNoDecorators = split.sublist(decorators.length);
+          // default type is dynamic
+          var type = 'dynamic';
+          if (tokensNoDecorators.length == 2) {
+            type = tokensNoDecorators[0];
+          }
+          final name = tokensNoDecorators.last;
+          types.add(
+            ExtensionParameter(
+              name: name,
+              decorators: decorators,
+              type: type,
+            ),
+          );
         }
       }
     }
     return types;
   }
-
-  Iterable<String> paramsToFillLower() {
-    final params = getParamsForMethod().expand((element) => element.split(' '));
-    final whereParams = params
-        .where(ThemeProducer.similarExtensions.containsKey)
-        .map((e) => e[0].toLowerCase() + e.substring(1));
-    return whereParams;
-  }
-
-  Iterable<String> paramsToFill() {
-    final params = getParamsForMethod().expand((element) => element.split(' '));
-    final whereParams = params.where(ThemeProducer.similarExtensions.containsKey);
-    return whereParams;
-  }
 }
 
 extension MethodListX on Iterable<MethodElement> {
-  Set<String> paramsForMethods() {
-    final neededParams = expand(
-      (element) => element
-          .getParamsForMethod()
-          .expand(
-            (element) => element.split(' '),
-          )
-          .where(ThemeProducer.similarExtensions.containsKey),
-    ).toSet();
-    return neededParams;
-  }
+  Iterable<ExtensionParameter> paramsForMethods() => map(
+        (e) => e.getParamsForMethod(),
+      ).expand((e) => e);
 }
