@@ -91,7 +91,7 @@ class ExtProducer extends CodeProducer<ParentExtension> {
                   paramsFromMethods($onlyMethods),
                 )
                 ..initializers.addAll(
-                  _initializersFromMethods($onlyMethods),
+                  _initializersForMethods($onlyMethods),
                 ),
             ),
             lerpConstructor(
@@ -105,7 +105,7 @@ class ExtProducer extends CodeProducer<ParentExtension> {
     );
   }
 
-  Iterable<Code> _initializersFromMethods(
+  Iterable<Code> _initializersForMethods(
     Iterable<ExtensionMethod> methods,
   ) sync* {
     yield* methods.map(
@@ -118,7 +118,7 @@ class ExtProducer extends CodeProducer<ParentExtension> {
       (m) => Code('_\$${m.name} = ${m.name}'),
     );
     final params = methods.expand<ExtensionParameter>((m) => m.parameters);
-    yield* params.toSet().map(
+    yield* params.map(
           (p) => Code('${p.name} = ${p.name}'),
         );
   }
