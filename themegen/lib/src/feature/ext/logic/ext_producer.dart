@@ -119,8 +119,8 @@ class ExtProducer extends CodeProducer<ParentExtension> {
     );
     final params = methods.expand<ExtensionParameter>((m) => m.parameters);
     yield* params.map(
-          (p) => Code('${p.name} = ${p.name}'),
-        );
+      (p) => Code('${p.name} = ${p.name}'),
+    );
   }
 
   Iterable<Field> _generateFields(
