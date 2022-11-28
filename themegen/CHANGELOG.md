@@ -1,3 +1,7 @@
+## 0.1.3
+
+- Update LICENSE TO MIT
+
 ## 0.1.2
 
 - Fixed LICENSE
