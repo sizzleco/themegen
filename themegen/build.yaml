@@ -6,7 +6,7 @@ targets:
 
 builders:
   themegen_theme:
-    import: "package:themegen/builder.dart"
+    import: "package:themegen/themegen.dart"
     builder_factories: ["themeGen"]
     build_extensions: {".dart": [".theme.g.part"]}
     auto_apply: dependents

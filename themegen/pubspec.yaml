@@ -10,17 +10,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  themegen_annotation:
-    path: ../themegen_annotation
-  source_gen: 1.2.6
-  build: 2.3.1
-  analyzer: 5.2.0
-  code_builder: 4.3.0
+  themegen_annotation: ^0.0.2
+  source_gen: ^1.2.6
+  build: ^2.3.1
+  analyzer: ^5.2.0
+  code_builder: ^4.3.0
   
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: 2.0.0
-  build_runner: 2.3.2
+  flutter_lints: ^2.0.0
+  build_runner: ^2.3.2
 
 flutter:
