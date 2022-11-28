@@ -23,7 +23,7 @@ class ThemeGenerator<T>
       extensions: annotation
           .read('extensions')
           .setValue
-          .map((e) => e.toTypeValue()?.element2)
+          .map((e) => e.toTypeValue()?.element)
           .whereType<ClassElement>()
           .toList(growable: false),
     );
