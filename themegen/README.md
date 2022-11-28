@@ -1,24 +1,5 @@
-# what will be generated 
-```dart
-// title is configurable
-class AppTheme {
-    
-}
+Library which generates theme extensions based on your configuration
 
-// title is configurable
-class AppColors extends ThemeExtension<AppColors> {
-    const AppColors({
-        required this.primary,
-    });
+# Example
 
-    final Color primary;
-}
-
-class AppTextStyles extends ThemeExtension<AppTextStyles> {
-    const AppTextStyles({
-        required this.h1,
-    });
-
-    final TextStyle h1;
-}
-```
+Example could be found in the example/example.dart file.
