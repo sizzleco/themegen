@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Fixed LICENSE
+
 ## 0.1.1
 
 - Added LICENSE
