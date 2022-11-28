@@ -35,7 +35,7 @@ abstract class AnnotatedClassFieldGenerator<A, T>
           : _producer.produce(
               element.displayName,
               extractFieldInfo(
-                element.thisType.element2 as ClassElement,
+                element.thisType.element as ClassElement,
                 annotation,
               ).toSet(),
             );
