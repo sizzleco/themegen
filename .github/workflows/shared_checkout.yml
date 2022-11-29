@@ -39,7 +39,7 @@ jobs:
         timeout-minutes: 1
         working-directory: ${{ inputs.directory }}
         run: | 
-          flutter analyze --fatal-infos --fatal-warnings 
+          flutter analyze --fatal-infos --fatal-warnings lib
 
       - name: 🧪 Run tests
         timeout-minutes: 2
