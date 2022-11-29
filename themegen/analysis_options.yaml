@@ -1,4 +1,6 @@
-include: package:flutter_lints/flutter.yaml
-
+include: package:purple_lints/purple_lints.yaml
+linter:
+  rules:
+    lines_longer_than_80_chars: false
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

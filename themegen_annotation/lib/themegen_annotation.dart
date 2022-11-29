@@ -1,6 +1,6 @@
 library themegen_annotation;
 
-const themegen = ThemeGen();
+const theme = ThemeGen();
 
 class ThemeGen {
   const ThemeGen({
@@ -12,10 +12,8 @@ class ThemeGen {
   final Set<Type> extensions;
 }
 
-class ThemeGenExtension {
-  const ThemeGenExtension({
-    this.title,
-  });
+class A {
+  const A(this.a);
 
-  final String? title;
+  final void Function() a;
 }
