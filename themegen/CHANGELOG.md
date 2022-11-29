@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Added generation
+
 ## 0.1.3
 
 - Update LICENSE TO MIT
