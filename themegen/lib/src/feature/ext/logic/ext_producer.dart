@@ -34,7 +34,7 @@ class ExtProducer extends CodeProducer<ParentExtension> {
     // because each extension has the same properties
     // if it doesn't have such, we will throw an exception
     final type = extensions.first.type;
-    final cl = type.element2;
+    final cl = type.element;
     if (cl == null || cl is! ClassElement) {
       throw Exception('Type $type is not a class');
     }

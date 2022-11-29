@@ -12,7 +12,7 @@ Method extensionMethod(
   String className,
   ExtensionType ext,
 ) {
-  final cl = ext.type.element2;
+  final cl = ext.type.element;
   final name = ext.name.lowerCaseFirst;
   if (cl == null || cl is! ClassElement) {
     throw Exception('Type ${ext.type} is not a class');
