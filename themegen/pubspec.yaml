@@ -1,10 +1,7 @@
 name: themegen
 description: A theme generator
-version: 0.0.1
-homepage: "https://github.com"
-
-# temporary fix
-publish_to: 'none'
+version: 0.1.3
+homepage: "https://github.com/blazeltd/themegen"
 
 environment:
   sdk: '>=2.18.1 <3.0.0'
@@ -13,8 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  themegen_annotation:
-    path: ../themegen_annotation
+  themegen_annotation: 0.0.4
   collection: 1.16.0
   source_gen: 1.2.5
   build: 2.3.1

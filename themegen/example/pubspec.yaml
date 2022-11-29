@@ -1,7 +1,6 @@
 name: example
-description: A new Flutter package project.
-version: 0.0.1
-homepage: "https://github.com"
+description: Example of using themegen
+homepage: "https://github.com/blazeltd/themegen"
 publish_to: "none"
 
 environment:
@@ -11,8 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  themegen_annotation:
-    path: ../../themegen_annotation
+  themegen_annotation: ^0.0.2
 
 dev_dependencies:
   flutter_test:
